@@ -10,7 +10,7 @@ import ButtomTab from "./Navigation/BottomTab";
 export default function App() {
   return (
     <NavigationContainer>
-      <ButtomTab />
+      <StackNav />
     </NavigationContainer>
   );
 }

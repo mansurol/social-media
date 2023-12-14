@@ -1,10 +1,12 @@
-import { View, Text, SafeAreaView } from "react-native";
+import { View, Text, SafeAreaView, ScrollView } from "react-native";
 import React from "react";
 
 export default function Profile() {
   return (
     <SafeAreaView>
-      <Text>Profile</Text>
+      <ScrollView>
+        <View></View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

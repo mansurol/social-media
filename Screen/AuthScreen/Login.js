@@ -32,7 +32,7 @@ export default function Login({ navigation }) {
         password
       );
       console.log("User logged in:", userCredential.user);
-      navigation.navigate(Routes.NewsFeed);
+      navigation.navigate(Routes.BottomTab);
     } catch (error) {
       setError("Login failed:", error);
       // Handle login failure (e.g., show error message)
