@@ -1,10 +1,10 @@
 import { View, Text, SafeAreaView } from "react-native";
 import React from "react";
 
-export default function NewsFeed() {
+export default function Search() {
   return (
     <SafeAreaView>
-      <Text>NewsFeed</Text>
+      <Text>Search</Text>
     </SafeAreaView>
   );
 }

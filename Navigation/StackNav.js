@@ -4,8 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "../Screen/AuthScreen/Login";
 import SignUp from "../Screen/AuthScreen/SignUp";
 import Routes from "../Utility/Routes";
-import NewsFeed from "../Screen/NewsFeed";
-
+import BottomTab from "../Navigation/BottomTab";
 const Stack = createNativeStackNavigator();
 export default function StackNav() {
   return (
@@ -22,8 +21,8 @@ export default function StackNav() {
       />
 
       <Stack.Screen
-        name={Routes.NewsFeed}
-        component={NewsFeed}
+        name={Routes.BottomTab}
+        component={BottomTab}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
