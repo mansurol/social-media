@@ -52,7 +52,7 @@ export default function ButtomTab() {
         <Tab.Screen
           name={Routes.PROFILE_Tab}
           component={Profile}
-          options={{ headerShown: false }}
+          options={{ headerShown: true }}
         />
       </Tab.Navigator>
     </>
