@@ -5,12 +5,23 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
+  TextInput,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import { Icon } from "react-native-elements";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function Profile() {
+  const [postText, setPostText] = useState("");
+
+  const handlePost = () => {
+    // Handle the post submission logic here
+    console.log("Posting:", postText);
+    // Reset the post text after posting
+    setPostText("");
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <ScrollView>
@@ -71,6 +82,70 @@ export default function Profile() {
             <Text style={{ color: "#3395D6" }}>Edit public details</Text>
           </TouchableOpacity>
         </View>
+
+        <View
+          style={{
+            borderWidth: 0.5,
+            borderColor: "#c1c1c1",
+            marginTop: 30,
+            width: "95%",
+            alignSelf: "center",
+          }}
+        ></View>
+
+        <View style={styles.postComponentStyle}>
+          <Text style={{ fontSize: 18, fontWeight: "700" }}>Your posts</Text>
+
+          <View style={{ flexDirection: "row", paddingTop: 15 }}>
+            <Image
+              source={require("../assets/mansur.jpg")}
+              style={{ width: 45, height: 45, borderRadius: 50 }}
+            />
+
+            <Text
+              style={{
+                marginLeft: 10,
+                fontSize: 17,
+                fontWeight: "600",
+                paddingTop: 15,
+              }}
+            >
+              Mansurol islam
+            </Text>
+          </View>
+
+          <View style={{ paddingHorizontal: 10, marginTop: 10 }}>
+            <TextInput
+              placeholder="What's on your mind?"
+              multiline
+              numberOfLines={10}
+              style={{
+                borderWidth: 1,
+                borderColor: "lightgray",
+                borderRadius: 10,
+                paddingHorizontal: 10,
+                paddingVertical: 5,
+                marginBottom: 15,
+                height: 100,
+              }}
+              value={postText}
+              onChangeText={(text) => setPostText(text)}
+            />
+          </View>
+          <TouchableOpacity
+            onPress={handlePost}
+            style={{
+              backgroundColor: "#CCE8FF",
+              padding: 9,
+              width: 55,
+              borderRadius: 5,
+              alignSelf: "flex-end",
+              marginRight: 10,
+            }}
+          >
+            <Text style={{ color: "black", fontSize: 16 }}>Post</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -111,5 +186,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
+  },
+  postComponentStyle: {
+    padding: 10,
   },
 });
