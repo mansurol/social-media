@@ -146,6 +146,158 @@ export default function Profile() {
             <Text style={{ color: "black", fontSize: 16 }}>Post</Text>
           </TouchableOpacity>
         </View>
+
+        <View style={{ padding: 10 }}>
+          <View style={{ flexDirection: "row", paddingTop: 15 }}>
+            <Image
+              source={require("../assets/mansur.jpg")}
+              style={{ width: 45, height: 45, borderRadius: 50 }}
+            />
+
+            <View style={{}}>
+              <Text
+                style={{
+                  marginLeft: 10,
+                  fontSize: 17,
+                  fontWeight: "600",
+                }}
+              >
+                Mansurol islam
+              </Text>
+
+              <Text
+                style={{
+                  marginLeft: 10,
+                  fontSize: 11,
+                  marginTop: 5,
+                }}
+              >
+                12 Nov
+              </Text>
+            </View>
+          </View>
+
+          <Text style={{ marginTop: 7 }}>
+            orem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip .
+          </Text>
+        </View>
+
+        <View style={{ padding: 10 }}>
+          <View style={{ flexDirection: "row", paddingTop: 15 }}>
+            <Image
+              source={require("../assets/mansur.jpg")}
+              style={{ width: 45, height: 45, borderRadius: 50 }}
+            />
+
+            <View style={{}}>
+              <Text
+                style={{
+                  marginLeft: 10,
+                  fontSize: 17,
+                  fontWeight: "600",
+                }}
+              >
+                Mansurol islam
+              </Text>
+
+              <Text
+                style={{
+                  marginLeft: 10,
+                  fontSize: 11,
+                  marginTop: 5,
+                }}
+              >
+                12 Nov
+              </Text>
+            </View>
+          </View>
+
+          <Text style={{ marginTop: 7 }}>
+            orem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip .
+          </Text>
+        </View>
+
+        <View style={{ padding: 10 }}>
+          <View style={{ flexDirection: "row", paddingTop: 15 }}>
+            <Image
+              source={require("../assets/mansur.jpg")}
+              style={{ width: 45, height: 45, borderRadius: 50 }}
+            />
+
+            <View style={{}}>
+              <Text
+                style={{
+                  marginLeft: 10,
+                  fontSize: 17,
+                  fontWeight: "600",
+                }}
+              >
+                Mansurol islam
+              </Text>
+
+              <Text
+                style={{
+                  marginLeft: 10,
+                  fontSize: 11,
+                  marginTop: 5,
+                }}
+              >
+                12 Nov
+              </Text>
+            </View>
+          </View>
+
+          <Text style={{ marginTop: 7 }}>
+            orem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip .
+          </Text>
+        </View>
+
+        <View style={{ padding: 10 }}>
+          <View style={{ flexDirection: "row", paddingTop: 15 }}>
+            <Image
+              source={require("../assets/mansur.jpg")}
+              style={{ width: 45, height: 45, borderRadius: 50 }}
+            />
+
+            <View style={{}}>
+              <Text
+                style={{
+                  marginLeft: 10,
+                  fontSize: 17,
+                  fontWeight: "600",
+                }}
+              >
+                Mansurol islam
+              </Text>
+
+              <Text
+                style={{
+                  marginLeft: 10,
+                  fontSize: 11,
+                  marginTop: 5,
+                }}
+              >
+                12 Nov
+              </Text>
+            </View>
+          </View>
+
+          <Text style={{ marginTop: 7 }}>
+            orem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip .
+          </Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
