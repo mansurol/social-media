@@ -3,86 +3,62 @@ import {
   Text,
   SafeAreaView,
   ScrollView,
-  Image,
   TouchableOpacity,
   TextInput,
+  FlatList,
+  Image,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
-import { Icon } from "react-native-elements";
-import { Ionicons } from "@expo/vector-icons";
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "@firebase/firestore";
+import { collection, getDocs, addDoc } from "firebase/firestore";
+import ProfileHeader from "../Components/ProfileHeader";
+import ProfileDetails from "../Components/ProfileDetails";
+const firebaseConfig = {
+  apiKey: "AIzaSyCWlV6jCSdAuwjsE1zwhUCjR-KwF_hTBSM",
+  authDomain: "social-media-bcd4c.firebaseapp.com",
+  projectId: "social-media-bcd4c",
+  storageBucket: "social-media-bcd4c.appspot.com",
+  messagingSenderId: "571128660022",
+  appId: "1:571128660022:web:b88c387e9b145043cbd897",
+};
 
+const app = initializeApp(firebaseConfig);
+export const db = getFirestore(app);
 export default function Profile() {
   const [postText, setPostText] = useState("");
+  const [userPosts, setUserPost] = useState([]);
+  const userCollectionRef = collection(db, "userpost");
 
-  const handlePost = () => {
-    // Handle the post submission logic here
-    console.log("Posting:", postText);
-    // Reset the post text after posting
+  const handlePost = async () => {
+    await addDoc(userCollectionRef, { postText });
     setPostText("");
   };
+  useEffect(() => {
+    const getUsers = async () => {
+      const data = await getDocs(userCollectionRef);
+      setUserPost(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    };
+    getUsers();
+  }, []);
 
-  return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <ScrollView>
-        <View>
+  const PostCard = ({ user }) => {
+    return (
+      <View>
+        <View style={{ flexDirection: "row", paddingTop: 15 }}>
           <Image
             source={require("../assets/mansur.jpg")}
-            style={{ width: "100%", height: 170, resizeMode: "cover" }}
+            style={{ width: 45, height: 45, borderRadius: 50 }}
           />
-          <View style={styles.headerName}>
-            <Text style={styles.HeaderNameStyle}>Mansurol Islam</Text>
-            <Text>
-              <Text style={styles.HeaderStyle}>3.6K</Text>
-              <Text style={{ color: "gray" }}> Friends</Text>
+          <View style={{ marginLeft: 10 }}>
+            <Text style={{ fontSize: 17, fontWeight: "600" }}>
+              Mansurol islam
             </Text>
+            <Text style={{ fontSize: 11, marginTop: 5 }}>Nov 12</Text>
           </View>
         </View>
-
-        <View style={{ borderWidth: 3, borderColor: "#c1c1c1" }}></View>
-
-        <View>
-          <Text style={styles.StyleDeailsText}>Details</Text>
-
-          <View style={{ padding: 10 }}>
-            <View style={styles.detaisTextStyle}>
-              <Icon name="work" color="gray" />
-
-              <Text>
-                {" "}
-                Work at <Text style={styles.changeTextStyle}>Student</Text>
-              </Text>
-            </View>
-            <View style={styles.detaisTextStyle}>
-              <Icon name="location-pin" color="gray" />
-              <Text>
-                {" "}
-                Lives in{" "}
-                <Text style={styles.changeTextStyle}>Dhaka, Bangladesh</Text>
-              </Text>
-            </View>
-            <View style={styles.detaisTextStyle}>
-              <Icon name="location-city" color="gray" />
-              <Text>
-                {" "}
-                From{" "}
-                <Text style={styles.changeTextStyle}>Dhaka, Bangladesh</Text>
-              </Text>
-            </View>
-            <View style={styles.detaisTextStyle}>
-              <Icon name="favorite" color="gray" />
-              <Text style={styles.changeTextStyle}> Single</Text>
-            </View>
-            <View style={styles.detaisTextStyle}>
-              <Icon name="people" type="material" color="gray" />
-              <Text> Followed by 1,2031 people</Text>
-            </View>
-          </View>
-          <TouchableOpacity style={styles.eidtButton}>
-            <Text style={{ color: "#3395D6" }}>Edit public details</Text>
-          </TouchableOpacity>
-        </View>
-
+        <Text>{user.postText}</Text>
         <View
           style={{
             borderWidth: 0.5,
@@ -92,7 +68,16 @@ export default function Profile() {
             alignSelf: "center",
           }}
         ></View>
+      </View>
+    );
+  };
 
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+      <ScrollView>
+        <ProfileHeader />
+
+        <ProfileDetails />
         <View style={styles.postComponentStyle}>
           <Text style={{ fontSize: 18, fontWeight: "700" }}>Your posts</Text>
 
@@ -148,173 +133,15 @@ export default function Profile() {
         </View>
 
         <View style={{ padding: 10 }}>
-          <View style={{ flexDirection: "row", paddingTop: 15 }}>
-            <Image
-              source={require("../assets/mansur.jpg")}
-              style={{ width: 45, height: 45, borderRadius: 50 }}
-            />
-
-            <View style={{}}>
-              <Text
-                style={{
-                  marginLeft: 10,
-                  fontSize: 17,
-                  fontWeight: "600",
-                }}
-              >
-                Mansurol islam
-              </Text>
-
-              <Text
-                style={{
-                  marginLeft: 10,
-                  fontSize: 11,
-                  marginTop: 5,
-                }}
-              >
-                12 Nov
-              </Text>
-            </View>
-          </View>
-
-          <Text style={{ marginTop: 7 }}>
-            orem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip .
-          </Text>
-        </View>
-
-        <View style={{ padding: 10 }}>
-          <View style={{ flexDirection: "row", paddingTop: 15 }}>
-            <Image
-              source={require("../assets/mansur.jpg")}
-              style={{ width: 45, height: 45, borderRadius: 50 }}
-            />
-
-            <View style={{}}>
-              <Text
-                style={{
-                  marginLeft: 10,
-                  fontSize: 17,
-                  fontWeight: "600",
-                }}
-              >
-                Mansurol islam
-              </Text>
-
-              <Text
-                style={{
-                  marginLeft: 10,
-                  fontSize: 11,
-                  marginTop: 5,
-                }}
-              >
-                12 Nov
-              </Text>
-            </View>
-          </View>
-
-          <Text style={{ marginTop: 7 }}>
-            orem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip .
-          </Text>
-        </View>
-
-        <View style={{ padding: 10 }}>
-          <View style={{ flexDirection: "row", paddingTop: 15 }}>
-            <Image
-              source={require("../assets/mansur.jpg")}
-              style={{ width: 45, height: 45, borderRadius: 50 }}
-            />
-
-            <View style={{}}>
-              <Text
-                style={{
-                  marginLeft: 10,
-                  fontSize: 17,
-                  fontWeight: "600",
-                }}
-              >
-                Mansurol islam
-              </Text>
-
-              <Text
-                style={{
-                  marginLeft: 10,
-                  fontSize: 11,
-                  marginTop: 5,
-                }}
-              >
-                12 Nov
-              </Text>
-            </View>
-          </View>
-
-          <Text style={{ marginTop: 7 }}>
-            orem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip .
-          </Text>
-        </View>
-
-        <View style={{ padding: 10 }}>
-          <View style={{ flexDirection: "row", paddingTop: 15 }}>
-            <Image
-              source={require("../assets/mansur.jpg")}
-              style={{ width: 45, height: 45, borderRadius: 50 }}
-            />
-
-            <View style={{}}>
-              <Text
-                style={{
-                  marginLeft: 10,
-                  fontSize: 17,
-                  fontWeight: "600",
-                }}
-              >
-                Mansurol islam
-              </Text>
-
-              <Text
-                style={{
-                  marginLeft: 10,
-                  fontSize: 11,
-                  marginTop: 5,
-                }}
-              >
-                12 Nov
-              </Text>
-            </View>
-          </View>
-
-          <Text style={{ marginTop: 7 }}>
-            orem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip .
-          </Text>
+          {userPosts.map((user) => (
+            <PostCard key={user.id} user={user} />
+          ))}
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
-  headerName: {
-    padding: 10,
-  },
-  HeaderNameStyle: {
-    marginBottom: 7,
-    fontSize: 17,
-    fontWeight: "700",
-  },
-  HeaderStyle: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
   StyleDeailsText: {
     fontSize: 18,
     fontWeight: "600",
