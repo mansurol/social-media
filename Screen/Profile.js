@@ -21,6 +21,9 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import ProfileDetails from "../Components/ProfileDetails";
+import { getAuth } from "firebase/auth";
+import { useSelector } from "react-redux";
+
 const firebaseConfig = {
   apiKey: "AIzaSyCWlV6jCSdAuwjsE1zwhUCjR-KwF_hTBSM",
   authDomain: "social-media-bcd4c.firebaseapp.com",
@@ -33,16 +36,22 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export default function Profile() {
+  const userData = useSelector((state) => state.userdata);
+
   const [postText, setPostText] = useState("");
   const [userPosts, setUserPost] = useState([]);
   const userCollectionRef = collection(db, "userpost");
   const [loading, setLoading] = useState(false);
+  const [nameTime, setnameTime] = useState();
+
   const handlePost = async () => {
     await addDoc(userCollectionRef, { postText, timestamp: serverTimestamp() });
     setPostText("");
   };
 
   useEffect(() => {
+    const auth = getAuth();
+    setnameTime(auth);
     setLoading(true);
 
     const getUsers = async () => {
@@ -70,12 +79,12 @@ export default function Profile() {
       <View>
         <View style={{ flexDirection: "row", paddingTop: 15 }}>
           <Image
-            source={require("../assets/mansur.jpg")}
+            source={{ uri: userData.photo }}
             style={{ width: 45, height: 45, borderRadius: 50 }}
           />
           <View style={{ marginLeft: 10 }}>
             <Text style={{ fontSize: 17, fontWeight: "600" }}>
-              Mansurol islam
+              {userData.name}
             </Text>
             <Text style={{ fontSize: 11, marginTop: 5 }}>
               {postDate ? postDate.toDateString() : "Unknown Date"}
@@ -109,11 +118,11 @@ export default function Profile() {
           <View>
             <View>
               <Image
-                source={require("../assets/mansur.jpg")}
-                style={{ width: "100%", height: 170, resizeMode: "cover" }}
+                source={{ uri: userData.photo }}
+                style={{ width: "100%", height: 170, resizeMode: "stretch" }}
               />
               <View style={styles.headerName}>
-                <Text style={styles.HeaderNameStyle}>Mansurol Islam</Text>
+                <Text style={styles.HeaderNameStyle}> {userData.name}</Text>
                 <Text>
                   <Text style={styles.HeaderStyle}>3.6K</Text>
                   <Text style={{ color: "gray" }}> Friends</Text>
@@ -128,7 +137,7 @@ export default function Profile() {
 
             <View style={{ flexDirection: "row", paddingTop: 15 }}>
               <Image
-                source={require("../assets/mansur.jpg")}
+                source={{ uri: userData.photo }}
                 style={{ width: 45, height: 45, borderRadius: 50 }}
               />
 
@@ -140,7 +149,7 @@ export default function Profile() {
                   paddingTop: 15,
                 }}
               >
-                Mansurol islam
+                {userData.name}
               </Text>
             </View>
 

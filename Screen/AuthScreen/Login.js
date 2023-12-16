@@ -10,6 +10,8 @@ import {
 import Routes from "../../Utility/Routes";
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { setUser } from "../../Redux/UserSlice";
+import { useDispatch } from "react-redux";
 const firebaseConfig = {
   apiKey: "AIzaSyCWlV6jCSdAuwjsE1zwhUCjR-KwF_hTBSM",
   authDomain: "social-media-bcd4c.firebaseapp.com",
@@ -22,7 +24,7 @@ export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  const dispatch = useDispatch();
   const handleLogin = async () => {
     try {
       const auth = getAuth();
@@ -31,11 +33,30 @@ export default function Login({ navigation }) {
         email,
         password
       );
+
+      const { displayName, photoURL } = userCredential.user;
+
+      dispatch(
+        setUser({
+          name: displayName || "",
+          photo: photoURL || "",
+        })
+      );
+
       console.log("User logged in:", userCredential.user);
       navigation.navigate(Routes.BottomTab);
     } catch (error) {
-      setError("Login failed:", error);
-      // Handle login failure (e.g., show error message)
+      let errorMessage = "Login failed";
+      if (error.code === "auth/user-not-found") {
+        errorMessage = "Invalid email address or user not found.";
+      } else if (error.code === "auth/wrong-password") {
+        errorMessage = "Incorrect password. Please try again.";
+      } else {
+        errorMessage = "Unexpected error occurred. Please try again later.";
+      }
+
+      setError(errorMessage);
+      console.error("Login failed:", error);
     }
   };
 

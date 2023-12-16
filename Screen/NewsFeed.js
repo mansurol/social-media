@@ -81,6 +81,7 @@ export default function NewsFeed() {
             borderColor: "#c1c1c1",
             width: "100%",
             alignSelf: "center",
+            marginTop: 5,
           }}
         ></View>
       </View>

@@ -6,11 +6,15 @@ import StackNav from "./Navigation/StackNav";
 import Login from "./Screen/AuthScreen/Login";
 import AuthNavigation from "./Navigation/AuthNavigation";
 import ButtomTab from "./Navigation/BottomTab";
+import { store } from "./Redux/Store";
+import { Provider } from "react-redux";
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <StackNav />
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <StackNav />
+      </NavigationContainer>
+    </Provider>
   );
 }
