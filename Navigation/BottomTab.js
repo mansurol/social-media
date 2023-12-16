@@ -42,7 +42,7 @@ export default function ButtomTab() {
         <Tab.Screen
           name={Routes.Home_Tab}
           component={NewsFeed}
-          options={{ headerShown: false }}
+          options={{ headerShown: true }}
         />
         <Tab.Screen
           name={Routes.Search}

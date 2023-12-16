@@ -5,15 +5,21 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  FlatList,
+  ActivityIndicator,
   Image,
+  KeyboardAvoidingView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "@firebase/firestore";
-import { collection, getDocs, addDoc } from "firebase/firestore";
-import ProfileHeader from "../Components/ProfileHeader";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  onSnapshot,
+  serverTimestamp,
+} from "firebase/firestore";
 import ProfileDetails from "../Components/ProfileDetails";
 const firebaseConfig = {
   apiKey: "AIzaSyCWlV6jCSdAuwjsE1zwhUCjR-KwF_hTBSM",
@@ -30,20 +36,36 @@ export default function Profile() {
   const [postText, setPostText] = useState("");
   const [userPosts, setUserPost] = useState([]);
   const userCollectionRef = collection(db, "userpost");
-
+  const [loading, setLoading] = useState(false);
   const handlePost = async () => {
-    await addDoc(userCollectionRef, { postText });
+    await addDoc(userCollectionRef, { postText, timestamp: serverTimestamp() });
     setPostText("");
   };
+
   useEffect(() => {
+    setLoading(true);
+
     const getUsers = async () => {
       const data = await getDocs(userCollectionRef);
       setUserPost(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      setLoading(false);
     };
-    getUsers();
+
+    getUsers(); // Fetch initial data
+
+    const unsubscribe = onSnapshot(userCollectionRef, (snapshot) => {
+      // This listener will trigger on any change in the "userpost" collection
+      getUsers(); // Update posts on any change in the collection
+    });
+
+    return () => {
+      unsubscribe(); // Cleanup the listener when the component unmounts
+    };
   }, []);
 
   const PostCard = ({ user }) => {
+    const postDate = user.timestamp ? new Date(user.timestamp.toDate()) : null;
+
     return (
       <View>
         <View style={{ flexDirection: "row", paddingTop: 15 }}>
@@ -55,7 +77,12 @@ export default function Profile() {
             <Text style={{ fontSize: 17, fontWeight: "600" }}>
               Mansurol islam
             </Text>
-            <Text style={{ fontSize: 11, marginTop: 5 }}>Nov 12</Text>
+            <Text style={{ fontSize: 11, marginTop: 5 }}>
+              {postDate ? postDate.toDateString() : "Unknown Date"}
+            </Text>
+            <Text style={{ fontSize: 11 }}>
+              {postDate ? postDate.toLocaleTimeString() : ""}
+            </Text>
           </View>
         </View>
         <Text>{user.postText}</Text>
@@ -74,70 +101,91 @@ export default function Profile() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <ScrollView>
-        <ProfileHeader />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <ScrollView>
+          <View>
+            <View>
+              <Image
+                source={require("../assets/mansur.jpg")}
+                style={{ width: "100%", height: 170, resizeMode: "cover" }}
+              />
+              <View style={styles.headerName}>
+                <Text style={styles.HeaderNameStyle}>Mansurol Islam</Text>
+                <Text>
+                  <Text style={styles.HeaderStyle}>3.6K</Text>
+                  <Text style={{ color: "gray" }}> Friends</Text>
+                </Text>
+              </View>
+            </View>
+            <View style={{ borderWidth: 3, borderColor: "#c1c1c1" }}></View>
+          </View>
+          <ProfileDetails />
+          <View style={styles.postComponentStyle}>
+            <Text style={{ fontSize: 18, fontWeight: "700" }}>Your posts</Text>
 
-        <ProfileDetails />
-        <View style={styles.postComponentStyle}>
-          <Text style={{ fontSize: 18, fontWeight: "700" }}>Your posts</Text>
+            <View style={{ flexDirection: "row", paddingTop: 15 }}>
+              <Image
+                source={require("../assets/mansur.jpg")}
+                style={{ width: 45, height: 45, borderRadius: 50 }}
+              />
 
-          <View style={{ flexDirection: "row", paddingTop: 15 }}>
-            <Image
-              source={require("../assets/mansur.jpg")}
-              style={{ width: 45, height: 45, borderRadius: 50 }}
-            />
+              <Text
+                style={{
+                  marginLeft: 10,
+                  fontSize: 17,
+                  fontWeight: "600",
+                  paddingTop: 15,
+                }}
+              >
+                Mansurol islam
+              </Text>
+            </View>
 
-            <Text
+            <View style={{ paddingHorizontal: 10, marginTop: 10 }}>
+              <TextInput
+                placeholder="What's on your mind?"
+                multiline
+                numberOfLines={10}
+                style={{
+                  borderWidth: 1,
+                  borderColor: "lightgray",
+                  borderRadius: 10,
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                  marginBottom: 15,
+                  height: 100,
+                }}
+                value={postText}
+                onChangeText={(text) => setPostText(text)}
+              />
+            </View>
+            <TouchableOpacity
+              onPress={handlePost}
               style={{
-                marginLeft: 10,
-                fontSize: 17,
-                fontWeight: "600",
-                paddingTop: 15,
+                backgroundColor: "#CCE8FF",
+                padding: 9,
+                width: 55,
+                borderRadius: 5,
+                alignSelf: "flex-end",
+                marginRight: 10,
               }}
             >
-              Mansurol islam
-            </Text>
+              <Text style={{ color: "black", fontSize: 16 }}>Post</Text>
+            </TouchableOpacity>
           </View>
 
-          <View style={{ paddingHorizontal: 10, marginTop: 10 }}>
-            <TextInput
-              placeholder="What's on your mind?"
-              multiline
-              numberOfLines={10}
-              style={{
-                borderWidth: 1,
-                borderColor: "lightgray",
-                borderRadius: 10,
-                paddingHorizontal: 10,
-                paddingVertical: 5,
-                marginBottom: 15,
-                height: 100,
-              }}
-              value={postText}
-              onChangeText={(text) => setPostText(text)}
-            />
+          <View style={{ padding: 10 }}>
+            {loading ? (
+              <ActivityIndicator size="large" color="#0000ff" />
+            ) : (
+              userPosts.map((user) => <PostCard key={user.id} user={user} />)
+            )}
           </View>
-          <TouchableOpacity
-            onPress={handlePost}
-            style={{
-              backgroundColor: "#CCE8FF",
-              padding: 9,
-              width: 55,
-              borderRadius: 5,
-              alignSelf: "flex-end",
-              marginRight: 10,
-            }}
-          >
-            <Text style={{ color: "black", fontSize: 16 }}>Post</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={{ padding: 10 }}>
-          {userPosts.map((user) => (
-            <PostCard key={user.id} user={user} />
-          ))}
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -165,6 +213,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
+  },
+  headerName: {
+    padding: 10,
+  },
+  HeaderNameStyle: {
+    marginBottom: 7,
+    fontSize: 17,
+    fontWeight: "700",
+  },
+  HeaderStyle: {
+    fontSize: 16,
+    fontWeight: "500",
   },
   postComponentStyle: {
     padding: 10,
