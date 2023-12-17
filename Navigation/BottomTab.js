@@ -8,7 +8,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StatusBar, StyleSheet } from "react-native";
 
 import NewsFeed from "../Screen/NewsFeed";
-import Search from "../Screen/Search";
+import Post from "../Screen/Post";
 
 export default function ButtomTab() {
   const Tab = createBottomTabNavigator();
@@ -24,8 +24,10 @@ export default function ButtomTab() {
             let IconName;
             if (route.name === Routes.Home_Tab) {
               IconName = focused ? "ios-home-sharp" : "ios-home-outline";
-            } else if (route.name === Routes.Search) {
-              IconName = focused ? "ios-search-sharp" : "ios-search-outline";
+            } else if (route.name === Routes.Post) {
+              IconName = focused
+                ? "ios-add-circle-sharp"
+                : "ios-add-circle-outline";
             } else if (route.name === Routes.PROFILE_Tab) {
               IconName = focused
                 ? "ios-person-circle-sharp"
@@ -45,8 +47,8 @@ export default function ButtomTab() {
           options={{ headerShown: true }}
         />
         <Tab.Screen
-          name={Routes.Search}
-          component={Search}
+          name={Routes.Post}
+          component={Post}
           options={{ headerShown: false }}
         />
         <Tab.Screen

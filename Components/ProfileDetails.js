@@ -1,8 +1,12 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import React from "react";
 import { Icon } from "react-native-elements";
+import Routes from "../Utility/Routes";
 
-export default function ProfileDetails() {
+export default function ProfileDetails({ navigation }) {
+  const handdleEdit = () => {
+    navigation.navigate(Routes.EditInfoScreen);
+  };
   return (
     <View>
       <View>
@@ -41,7 +45,7 @@ export default function ProfileDetails() {
             <Text> Followed by 1,2031 people</Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.eidtButton}>
+        <TouchableOpacity style={styles.eidtButton} onPress={handdleEdit}>
           <Text style={{ color: "#3395D6" }}>Edit public details</Text>
         </TouchableOpacity>
       </View>

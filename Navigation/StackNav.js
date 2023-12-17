@@ -5,6 +5,7 @@ import Login from "../Screen/AuthScreen/Login";
 import SignUp from "../Screen/AuthScreen/SignUp";
 import Routes from "../Utility/Routes";
 import BottomTab from "../Navigation/BottomTab";
+import EditInfoScreen from "../Screen/EditInfoScreen";
 const Stack = createNativeStackNavigator();
 export default function StackNav() {
   return (
@@ -24,6 +25,11 @@ export default function StackNav() {
         name={Routes.BottomTab}
         component={BottomTab}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={Routes.EditInfoScreen}
+        component={EditInfoScreen}
+        options={{ headerShown: true }}
       />
     </Stack.Navigator>
   );

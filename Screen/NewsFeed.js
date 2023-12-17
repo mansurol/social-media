@@ -33,17 +33,20 @@ export default function NewsFeed() {
     setLoading(true);
     const auth = getAuth();
     setnameTime(auth);
-    // console.log("auth", auth.currentUser.displayName);
+
     const getUsers = async () => {
       const data = await getDocs(userCollectionRef);
-      setUserPost(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      const sortedPosts = data.docs
+        .map((doc) => ({ ...doc.data(), id: doc.id }))
+        .sort((a, b) => b.timestamp.toMillis() - a.timestamp.toMillis()); // Sort by timestamp in descending order
+
+      setUserPost(sortedPosts);
       setLoading(false);
     };
 
     getUsers(); // Fetch initial data
 
     const unsubscribe = onSnapshot(userCollectionRef, (snapshot) => {
-      // This listener will trigger on any change in the "userpost" collection
       getUsers(); // Update posts on any change in the collection
     });
 

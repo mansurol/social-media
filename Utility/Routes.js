@@ -4,7 +4,7 @@ export default {
   NewsFeed: "Feed",
   Home_Tab: "News Feed",
   PROFILE_Tab: "Profile",
-  Search: "Search",
-
+  Post: "Post",
+  EditInfoScreen: "Information Edit",
   BottomTab: "BottomTab",
 };

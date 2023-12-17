@@ -22,9 +22,7 @@ import {
 } from "firebase/firestore";
 import ProfileDetails from "../Components/ProfileDetails";
 import { getAuth } from "firebase/auth";
-import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../Redux/UserSlice";
-import Routes from "../Utility/Routes";
+import { useSelector } from "react-redux";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCWlV6jCSdAuwjsE1zwhUCjR-KwF_hTBSM",
@@ -37,10 +35,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
-
-export default function Profile({ navigation }) {
+export default function Profile() {
   const userData = useSelector((state) => state.userdata);
-  const dispatch = useDispatch();
+
   const [postText, setPostText] = useState("");
   const [userPosts, setUserPost] = useState([]);
   const userCollectionRef = collection(db, "userpost");
@@ -53,31 +50,20 @@ export default function Profile({ navigation }) {
   };
 
   useEffect(() => {
-    setLoading(true);
     const auth = getAuth();
     setnameTime(auth);
+    setLoading(true);
 
     const getUsers = async () => {
       const data = await getDocs(userCollectionRef);
-      const sortedPosts = data.docs
-        .map((doc) => ({ ...doc.data(), id: doc.id }))
-        .filter(
-          (post) => post.timestamp !== null && post.timestamp !== undefined
-        )
-        .sort((a, b) => {
-          if (a.timestamp && b.timestamp) {
-            return b.timestamp.toMillis() - a.timestamp.toMillis();
-          }
-          return 0;
-        });
-
-      setUserPost(sortedPosts);
+      setUserPost(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
       setLoading(false);
     };
 
     getUsers(); // Fetch initial data
 
     const unsubscribe = onSnapshot(userCollectionRef, (snapshot) => {
+      // This listener will trigger on any change in the "userpost" collection
       getUsers(); // Update posts on any change in the collection
     });
 
@@ -86,47 +72,6 @@ export default function Profile({ navigation }) {
     };
   }, []);
 
-  const handleLogout = () => {
-    dispatch(setUser(""));
-    navigation.navigate(Routes.Login);
-  };
-
-  const PostCard = ({ user }) => {
-    const postDate = user.timestamp ? new Date(user.timestamp.toDate()) : null;
-
-    return (
-      <View>
-        <View style={{ flexDirection: "row", paddingTop: 15 }}>
-          <Image
-            source={{ uri: userData.photo }}
-            style={{ width: 45, height: 45, borderRadius: 50 }}
-          />
-          <View style={{ marginLeft: 10 }}>
-            <Text style={{ fontSize: 17, fontWeight: "600" }}>
-              {userData.name}
-            </Text>
-            <Text style={{ fontSize: 11, marginTop: 5 }}>
-              {postDate ? postDate.toDateString() : "Unknown Date"}
-            </Text>
-            <Text style={{ fontSize: 11 }}>
-              {postDate ? postDate.toLocaleTimeString() : ""}
-            </Text>
-          </View>
-        </View>
-        <Text>{user.postText}</Text>
-        <View
-          style={{
-            borderWidth: 0.5,
-            borderColor: "#c1c1c1",
-            marginTop: 30,
-            width: "95%",
-            alignSelf: "center",
-          }}
-        ></View>
-      </View>
-    );
-  };
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <KeyboardAvoidingView
@@ -134,33 +79,6 @@ export default function Profile({ navigation }) {
         style={{ flex: 1 }}
       >
         <ScrollView>
-          <View>
-            <View>
-              <Image
-                source={{ uri: userData.photo }}
-                style={{ width: "100%", height: 170, resizeMode: "stretch" }}
-              />
-              <View style={styles.headerName}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Text style={styles.HeaderNameStyle}> {userData.name}</Text>
-                  <TouchableOpacity onPress={handleLogout}>
-                    <Text style={styles.HeaderNameStyle}>Logout</Text>
-                  </TouchableOpacity>
-                </View>
-                <Text>
-                  <Text style={styles.HeaderStyle}>3.6K</Text>
-                  <Text style={{ color: "gray" }}> Friends</Text>
-                </Text>
-              </View>
-            </View>
-            <View style={{ borderWidth: 3, borderColor: "#c1c1c1" }}></View>
-          </View>
-          <ProfileDetails navigation={navigation} />
           <View style={styles.postComponentStyle}>
             <Text style={{ fontSize: 18, fontWeight: "700" }}>Your posts</Text>
 
@@ -214,14 +132,6 @@ export default function Profile({ navigation }) {
               <Text style={{ color: "black", fontSize: 16 }}>Post</Text>
             </TouchableOpacity>
           </View>
-
-          <View style={{ padding: 10 }}>
-            {loading ? (
-              <ActivityIndicator size="large" color="#0000ff" />
-            ) : (
-              userPosts.map((user) => <PostCard key={user.id} user={user} />)
-            )}
-          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -266,5 +176,6 @@ const styles = StyleSheet.create({
   },
   postComponentStyle: {
     padding: 10,
+    marginTop: 30,
   },
 });
