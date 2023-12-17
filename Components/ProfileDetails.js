@@ -2,8 +2,12 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import React from "react";
 import { Icon } from "react-native-elements";
 import Routes from "../Utility/Routes";
+import { useSelector } from "react-redux";
 
 export default function ProfileDetails({ navigation }) {
+  const { workAt, livesIn, from, relationshipStatus, follower } = useSelector(
+    (state) => state.userdata
+  );
   const handdleEdit = () => {
     navigation.navigate(Routes.EditInfoScreen);
   };
@@ -18,31 +22,30 @@ export default function ProfileDetails({ navigation }) {
 
             <Text>
               {" "}
-              Work at <Text style={styles.changeTextStyle}>Student</Text>
+              Work at <Text style={styles.changeTextStyle}>{workAt}</Text>
             </Text>
           </View>
           <View style={styles.detaisTextStyle}>
             <Icon name="location-pin" color="gray" />
             <Text>
               {" "}
-              Lives in{" "}
-              <Text style={styles.changeTextStyle}>Dhaka, Bangladesh</Text>
+              Lives in <Text style={styles.changeTextStyle}>{livesIn}</Text>
             </Text>
           </View>
           <View style={styles.detaisTextStyle}>
             <Icon name="location-city" color="gray" />
             <Text>
               {" "}
-              From <Text style={styles.changeTextStyle}>Dhaka, Bangladesh</Text>
+              From <Text style={styles.changeTextStyle}>{from}</Text>
             </Text>
           </View>
           <View style={styles.detaisTextStyle}>
             <Icon name="favorite" color="gray" />
-            <Text style={styles.changeTextStyle}> Single</Text>
+            <Text style={styles.changeTextStyle}> {relationshipStatus}</Text>
           </View>
           <View style={styles.detaisTextStyle}>
             <Icon name="people" type="material" color="gray" />
-            <Text> Followed by 1,2031 people</Text>
+            <Text> Followed by {follower}</Text>
           </View>
         </View>
         <TouchableOpacity style={styles.eidtButton} onPress={handdleEdit}>

@@ -1,9 +1,15 @@
+// userSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   name: "",
   email: "",
   photo: "",
+  workAt: "Student",
+  livesIn: "Dhaka, Bangladesh",
+  from: "Dhaka, Bangladesh",
+  relationshipStatus: "Single",
+  follower: "12002 people",
 };
 
 export const userSlice = createSlice({
@@ -21,9 +27,32 @@ export const userSlice = createSlice({
       state.email = "";
       state.photo = "";
     },
+    setWorkAt: (state, action) => {
+      state.workAt = action.payload;
+    },
+    setLivesIn: (state, action) => {
+      state.livesIn = action.payload;
+    },
+    setFrom: (state, action) => {
+      state.from = action.payload;
+    },
+    setRelationshipStatus: (state, action) => {
+      state.relationshipStatus = action.payload;
+    },
+    setFollower: (state, action) => {
+      state.follower = action.payload;
+    },
   },
 });
 
-export const { setUser, clearUser } = userSlice.actions;
+export const {
+  setUser,
+  clearUser,
+  setWorkAt,
+  setLivesIn,
+  setFrom,
+  setRelationshipStatus,
+  setFollower,
+} = userSlice.actions;
 
 export default userSlice.reducer;
