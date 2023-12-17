@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   Dimensions,
   ScrollView,
+  KeyboardAvoidingView,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Feather } from "@expo/vector-icons";
@@ -105,65 +106,76 @@ export default function SignUp({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.innerContainer}>
-        <View>
-          <Text style={styles.title}>Sign Up</Text>
-          {error && <Text style={styles.error}>{error}</Text>}
-
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholder="Full Name"
-              value={fullName}
-              onChangeText={(text) => setFullName(text)}
-              style={styles.input}
-            />
-            <TextInput
-              placeholder="Email"
-              value={email}
-              onChangeText={(text) => setEmail(text)}
-              style={styles.input}
-            />
-            <TextInput
-              placeholder="Password"
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-              secureTextEntry
-              style={styles.input}
-            />
-            <TextInput
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChangeText={(text) => setConfirmPassword(text)}
-              secureTextEntry
-              style={styles.input}
-            />
-          </View>
-
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      >
+        <ScrollView style={styles.innerContainer}>
           <View>
-            <Text style={styles.ImgText}>Add Image</Text>
-            <TouchableOpacity onPress={pickImage} style={styles.choosePicture}>
-              <Feather name="camera" size={24} color="black" />
+            <Text style={styles.title}>Sign Up</Text>
+            {error && <Text style={styles.error}>{error}</Text>}
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                placeholder="Full Name"
+                value={fullName}
+                onChangeText={(text) => setFullName(text)}
+                style={styles.input}
+              />
+              <TextInput
+                placeholder="Email"
+                value={email}
+                onChangeText={(text) => setEmail(text)}
+                style={styles.input}
+              />
+              <TextInput
+                placeholder="Password"
+                value={password}
+                onChangeText={(text) => setPassword(text)}
+                secureTextEntry
+                style={styles.input}
+              />
+              <TextInput
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChangeText={(text) => setConfirmPassword(text)}
+                secureTextEntry
+                style={styles.input}
+              />
+            </View>
+
+            <View>
+              <Text style={styles.ImgText}>Add Image</Text>
+              <TouchableOpacity
+                onPress={pickImage}
+                style={styles.choosePicture}
+              >
+                <Feather name="camera" size={24} color="black" />
+              </TouchableOpacity>
+            </View>
+
+            {image && <Image source={{ uri: image }} style={styles.image} />}
+            <TouchableOpacity
+              onPress={handleSignUp}
+              style={styles.signUpButton}
+            >
+              <Text style={styles.signUpText}>Sign Up</Text>
             </TouchableOpacity>
           </View>
 
-          {image && <Image source={{ uri: image }} style={styles.image} />}
-          <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
-            <Text style={styles.signUpText}>Sign Up</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.bottomTextContainer}>
-          <Text style={styles.bottomText}>
-            Already have an Account?{" "}
-            <Text
-              style={styles.loginLink}
-              onPress={() => navigation.navigate(Routes.Login)}
-            >
-              Log in
+          <View style={styles.bottomTextContainer}>
+            <Text style={styles.bottomText}>
+              Already have an Account?{" "}
+              <Text
+                style={styles.loginLink}
+                onPress={() => navigation.navigate(Routes.Login)}
+              >
+                Log in
+              </Text>
             </Text>
-          </Text>
-        </View>
-      </ScrollView>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -198,7 +210,7 @@ const styles = StyleSheet.create({
     padding: 8,
     marginVertical: 10,
     width: "100%",
-    borderRadius: 10,
+    borderRadius: 5,
   },
   image: {
     width: width * 0.7,
@@ -243,6 +255,8 @@ const styles = StyleSheet.create({
     color: "tomato",
   },
   error: {
-    color: "tomato",
+    fontSize: 15,
+    padding: 10,
+    color: "red",
   },
 });

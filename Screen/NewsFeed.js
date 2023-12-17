@@ -24,11 +24,13 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+
 export default function NewsFeed() {
   const [userPosts, setUserPost] = useState([]);
   const userCollectionRef = collection(db, "userpost");
   const [loading, setLoading] = useState(false);
   const [nameTime, setnameTime] = useState();
+
   useEffect(() => {
     setLoading(true);
     const auth = getAuth();
@@ -38,20 +40,20 @@ export default function NewsFeed() {
       const data = await getDocs(userCollectionRef);
       const sortedPosts = data.docs
         .map((doc) => ({ ...doc.data(), id: doc.id }))
-        .sort((a, b) => b.timestamp.toMillis() - a.timestamp.toMillis()); // Sort by timestamp in descending order
+        .sort((a, b) => b.timestamp.toMillis() - a.timestamp.toMillis());
 
       setUserPost(sortedPosts);
       setLoading(false);
     };
 
-    getUsers(); // Fetch initial data
+    getUsers();
 
     const unsubscribe = onSnapshot(userCollectionRef, (snapshot) => {
-      getUsers(); // Update posts on any change in the collection
+      getUsers();
     });
 
     return () => {
-      unsubscribe(); // Cleanup the listener when the component unmounts
+      unsubscribe();
     };
   }, []);
 
@@ -96,7 +98,7 @@ export default function NewsFeed() {
       <ScrollView>
         <View style={{ padding: 10 }}>
           {loading ? (
-            <ActivityIndicator size="large" color="#0000ff" />
+            <ActivityIndicator size="large" color="#000" />
           ) : (
             userPosts.map((user) => <PostCard key={user.id} user={user} />)
           )}

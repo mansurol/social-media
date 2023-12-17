@@ -25,6 +25,7 @@ import { getAuth } from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../Redux/UserSlice";
 import Routes from "../Utility/Routes";
+import ProfileHeader from "../Components/ProfileHeader";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCWlV6jCSdAuwjsE1zwhUCjR-KwF_hTBSM",
@@ -48,7 +49,10 @@ export default function Profile({ navigation }) {
   const [nameTime, setnameTime] = useState();
 
   const handlePost = async () => {
-    await addDoc(userCollectionRef, { postText, timestamp: serverTimestamp() });
+    await addDoc(userCollectionRef, {
+      postText: postText || "",
+      timestamp: serverTimestamp(),
+    });
     setPostText("");
   };
 
@@ -59,37 +63,32 @@ export default function Profile({ navigation }) {
 
     const getUsers = async () => {
       const data = await getDocs(userCollectionRef);
-      const sortedPosts = data.docs
+      const filteredPosts = data.docs
         .map((doc) => ({ ...doc.data(), id: doc.id }))
         .filter(
           (post) => post.timestamp !== null && post.timestamp !== undefined
-        )
-        .sort((a, b) => {
-          if (a.timestamp && b.timestamp) {
-            return b.timestamp.toMillis() - a.timestamp.toMillis();
-          }
-          return 0;
-        });
+        );
+
+      const sortedPosts = filteredPosts.sort((a, b) => {
+        const aTimestamp = a.timestamp ? a.timestamp.toMillis() : 0;
+        const bTimestamp = b.timestamp ? b.timestamp.toMillis() : 0;
+        return bTimestamp - aTimestamp;
+      });
 
       setUserPost(sortedPosts);
       setLoading(false);
     };
 
-    getUsers(); // Fetch initial data
+    getUsers();
 
     const unsubscribe = onSnapshot(userCollectionRef, (snapshot) => {
-      getUsers(); // Update posts on any change in the collection
+      getUsers();
     });
 
     return () => {
-      unsubscribe(); // Cleanup the listener when the component unmounts
+      unsubscribe();
     };
   }, []);
-
-  const handleLogout = () => {
-    dispatch(setUser(""));
-    navigation.navigate(Routes.Login);
-  };
 
   const PostCard = ({ user }) => {
     const postDate = user.timestamp ? new Date(user.timestamp.toDate()) : null;
@@ -134,33 +133,10 @@ export default function Profile({ navigation }) {
         style={{ flex: 1 }}
       >
         <ScrollView>
-          <View>
-            <View>
-              <Image
-                source={{ uri: userData.photo }}
-                style={{ width: "100%", height: 170, resizeMode: "stretch" }}
-              />
-              <View style={styles.headerName}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Text style={styles.HeaderNameStyle}> {userData.name}</Text>
-                  <TouchableOpacity onPress={handleLogout}>
-                    <Text style={styles.HeaderNameStyle}>Logout</Text>
-                  </TouchableOpacity>
-                </View>
-                <Text>
-                  <Text style={styles.HeaderStyle}>3.6K</Text>
-                  <Text style={{ color: "gray" }}> Friends</Text>
-                </Text>
-              </View>
-            </View>
-            <View style={{ borderWidth: 3, borderColor: "#c1c1c1" }}></View>
-          </View>
+          <ProfileHeader navigation={navigation} />
+
           <ProfileDetails navigation={navigation} />
+
           <View style={styles.postComponentStyle}>
             <Text style={{ fontSize: 18, fontWeight: "700" }}>Your posts</Text>
 

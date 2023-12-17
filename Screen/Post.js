@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -5,24 +6,25 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  ActivityIndicator,
   Image,
   KeyboardAvoidingView,
+  Platform,
+  Dimensions,
+  StyleSheet,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import { StyleSheet } from "react-native";
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "@firebase/firestore";
 import {
+  getFirestore,
   collection,
   getDocs,
   addDoc,
   onSnapshot,
   serverTimestamp,
 } from "firebase/firestore";
-import ProfileDetails from "../Components/ProfileDetails";
 import { getAuth } from "firebase/auth";
 import { useSelector } from "react-redux";
+
+const { width, height } = Dimensions.get("window");
 
 const firebaseConfig = {
   apiKey: "AIzaSyCWlV6jCSdAuwjsE1zwhUCjR-KwF_hTBSM",
@@ -35,7 +37,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
-export default function Profile() {
+
+export default function Post() {
   const userData = useSelector((state) => state.userdata);
 
   const [postText, setPostText] = useState("");
@@ -43,10 +46,29 @@ export default function Profile() {
   const userCollectionRef = collection(db, "userpost");
   const [loading, setLoading] = useState(false);
   const [nameTime, setnameTime] = useState();
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handlePost = async () => {
-    await addDoc(userCollectionRef, { postText, timestamp: serverTimestamp() });
-    setPostText("");
+    if (!postText.trim()) {
+      setErrorMessage("Please enter your post content");
+      return;
+    }
+
+    try {
+      await addDoc(userCollectionRef, {
+        postText: postText.trim(),
+        timestamp: serverTimestamp(),
+      });
+      setPostText("");
+      setErrorMessage("");
+      setSuccessMessage("Post created successfully!");
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 2000);
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
   };
 
   useEffect(() => {
@@ -60,15 +82,14 @@ export default function Profile() {
       setLoading(false);
     };
 
-    getUsers(); // Fetch initial data
+    getUsers();
 
     const unsubscribe = onSnapshot(userCollectionRef, (snapshot) => {
-      // This listener will trigger on any change in the "userpost" collection
-      getUsers(); // Update posts on any change in the collection
+      getUsers();
     });
 
     return () => {
-      unsubscribe(); // Cleanup the listener when the component unmounts
+      unsubscribe();
     };
   }, []);
 
@@ -78,29 +99,40 @@ export default function Profile() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-        <ScrollView>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <View style={styles.postComponentStyle}>
-            <Text style={{ fontSize: 18, fontWeight: "700" }}>Your posts</Text>
+            <Text style={{ fontSize: width * 0.06, fontWeight: "700" }}>
+              Your posts
+            </Text>
 
-            <View style={{ flexDirection: "row", paddingTop: 15 }}>
+            <View style={{ flexDirection: "row", paddingTop: height * 0.015 }}>
               <Image
                 source={{ uri: userData.photo }}
-                style={{ width: 45, height: 45, borderRadius: 50 }}
+                style={{
+                  width: width * 0.12,
+                  height: width * 0.12,
+                  borderRadius: width * 0.06,
+                }}
               />
 
               <Text
                 style={{
-                  marginLeft: 10,
-                  fontSize: 17,
+                  marginLeft: width * 0.03,
+                  fontSize: width * 0.045,
                   fontWeight: "600",
-                  paddingTop: 15,
+                  paddingTop: height * 0.015,
                 }}
               >
                 {userData.name}
               </Text>
             </View>
 
-            <View style={{ paddingHorizontal: 10, marginTop: 10 }}>
+            <View
+              style={{
+                paddingHorizontal: width * 0.025,
+                marginTop: height * 0.01,
+              }}
+            >
               <TextInput
                 placeholder="What's on your mind?"
                 multiline
@@ -108,28 +140,35 @@ export default function Profile() {
                 style={{
                   borderWidth: 1,
                   borderColor: "lightgray",
-                  borderRadius: 10,
-                  paddingHorizontal: 10,
-                  paddingVertical: 5,
-                  marginBottom: 15,
-                  height: 100,
+                  borderRadius: width * 0.03,
+                  paddingHorizontal: width * 0.03,
+                  paddingVertical: height * 0.005,
+                  marginBottom: height * 0.015,
+                  height: height * 0.15,
                 }}
                 value={postText}
                 onChangeText={(text) => setPostText(text)}
               />
+              {errorMessage ? (
+                <Text style={{ color: "red" }}>{errorMessage}</Text>
+              ) : successMessage ? (
+                <Text style={{ color: "green" }}>{successMessage}</Text>
+              ) : null}
             </View>
             <TouchableOpacity
               onPress={handlePost}
               style={{
                 backgroundColor: "#CCE8FF",
-                padding: 9,
-                width: 55,
-                borderRadius: 5,
+                padding: width * 0.018,
+                width: width * 0.14,
+                borderRadius: width * 0.01,
                 alignSelf: "flex-end",
-                marginRight: 10,
+                marginRight: width * 0.025,
               }}
             >
-              <Text style={{ color: "black", fontSize: 16 }}>Post</Text>
+              <Text style={{ color: "black", fontSize: width * 0.042 }}>
+                Post
+              </Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -137,6 +176,7 @@ export default function Profile() {
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
   StyleDeailsText: {
     fontSize: 18,
@@ -175,7 +215,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   postComponentStyle: {
-    padding: 10,
-    marginTop: 30,
+    padding: width * 0.025,
+    marginTop: height * 0.05,
   },
 });
