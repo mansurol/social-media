@@ -118,7 +118,7 @@ export default function Profile({ navigation }) {
             borderWidth: 0.5,
             borderColor: "#c1c1c1",
             marginTop: 30,
-            width: "95%",
+            width: "100%",
             alignSelf: "center",
           }}
         ></View>

@@ -20,6 +20,8 @@ import {
   updateProfile,
 } from "firebase/auth";
 import Routes from "../../Utility/Routes";
+import { getReactNativePersistence } from "firebase/auth";
+import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width, height } = Dimensions.get("window");
 
@@ -33,7 +35,9 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+export const auth = getAuth(app, {
+  persistence: getReactNativePersistence(ReactNativeAsyncStorage),
+});
 
 export default function SignUp({ navigation }) {
   const [fullName, setFullName] = useState("");
@@ -95,8 +99,7 @@ export default function SignUp({ navigation }) {
         displayName: fullName,
         photoURL: image,
       });
-
-      console.log("User signed up:", user);
+      // console.log("User signed up:", user);
       navigation.navigate(Routes.Login);
     } catch (error) {
       setError(error.message);
@@ -165,7 +168,7 @@ export default function SignUp({ navigation }) {
 
           <View style={styles.bottomTextContainer}>
             <Text style={styles.bottomText}>
-              Already have an Account?{" "}
+              Already have an Account?
               <Text
                 style={styles.loginLink}
                 onPress={() => navigation.navigate(Routes.Login)}
@@ -213,14 +216,14 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   image: {
-    width: width * 0.7,
+    width: width * 0.9,
     height: width * 0.7,
     marginVertical: 10,
   },
   choosePicture: {
     alignItems: "center",
     justifyContent: "center",
-    width: 50,
+    width: "100%",
     height: 50,
     backgroundColor: "lightgray",
     borderRadius: 25,

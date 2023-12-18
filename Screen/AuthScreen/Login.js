@@ -24,6 +24,8 @@ export default function Login({ navigation }) {
 
   const dispatch = useDispatch();
 
+  //validate
+
   const validateForm = () => {
     if (!email.trim()) {
       setError("Please enter your email");
@@ -67,7 +69,7 @@ export default function Login({ navigation }) {
 
       navigation.navigate(Routes.BottomTab);
     } catch (error) {
-      console.error("Firebase Auth Error:", error);
+      //console.error("Firebase Auth Error:", error);
 
       let errorMessage = "Login failed";
       if (error.code === "auth/user-not-found") {
@@ -82,6 +84,7 @@ export default function Login({ navigation }) {
     }
   };
 
+  //Ui
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView

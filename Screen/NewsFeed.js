@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -5,12 +6,15 @@ import {
   ScrollView,
   ActivityIndicator,
   Image,
+  StyleSheet,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import { StyleSheet } from "react-native";
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "@firebase/firestore";
-import { collection, getDocs, onSnapshot } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  onSnapshot,
+} from "@firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
@@ -24,6 +28,40 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+
+const LoadingIndicator = () => (
+  <View style={styles.loading}>
+    <ActivityIndicator size="large" color="#000" />
+  </View>
+);
+
+const PostCard = ({ user, nameTime }) => {
+  const postDate = user.timestamp ? new Date(user.timestamp.toDate()) : null;
+
+  return (
+    <View style={styles.postContainer}>
+      <View style={styles.postHeader}>
+        <Image
+          source={{ uri: nameTime.currentUser.photoURL }}
+          style={styles.profileImage}
+        />
+        <View style={styles.userInfo}>
+          <Text style={styles.userName}>
+            {nameTime.currentUser.displayName}
+          </Text>
+          <Text style={styles.postDateTime}>
+            {postDate ? postDate.toDateString() : "Unknown Date"}
+          </Text>
+          <Text style={styles.postDateTime}>
+            {postDate ? postDate.toLocaleTimeString() : ""}
+          </Text>
+        </View>
+      </View>
+      <Text style={styles.postText}>{user.postText}</Text>
+      <View style={styles.separator} />
+    </View>
+  );
+};
 
 export default function NewsFeed() {
   const [userPosts, setUserPost] = useState([]);
@@ -48,7 +86,7 @@ export default function NewsFeed() {
 
     getUsers();
 
-    const unsubscribe = onSnapshot(userCollectionRef, (snapshot) => {
+    const unsubscribe = onSnapshot(userCollectionRef, () => {
       getUsers();
     });
 
@@ -57,82 +95,68 @@ export default function NewsFeed() {
     };
   }, []);
 
-  const PostCard = ({ user }) => {
-    const postDate = user.timestamp ? new Date(user.timestamp.toDate()) : null;
-    return (
-      <View>
-        <View style={{ flexDirection: "row", paddingTop: 15 }}>
-          <Image
-            source={{ uri: nameTime.currentUser.photoURL }}
-            style={{ width: 45, height: 45, borderRadius: 50 }}
-          />
-
-          <View style={{ marginLeft: 10 }}>
-            <Text style={{ fontSize: 17, fontWeight: "600" }}>
-              {nameTime.currentUser.displayName}
-            </Text>
-            <Text style={{ fontSize: 11, marginTop: 5 }}>
-              {postDate ? postDate.toDateString() : "Unknown Date"}
-            </Text>
-            <Text style={{ fontSize: 11 }}>
-              {postDate ? postDate.toLocaleTimeString() : ""}
-            </Text>
-          </View>
-        </View>
-        <Text style={{ marginTop: 10 }}>{user.postText}</Text>
-        <View
-          style={{
-            borderWidth: 0.5,
-            borderColor: "#c1c1c1",
-            width: "100%",
-            alignSelf: "center",
-            marginTop: 5,
-          }}
-        ></View>
-      </View>
-    );
-  };
-
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+    <SafeAreaView style={styles.container}>
       <ScrollView>
-        <View style={{ padding: 10 }}>
+        <View style={styles.posts}>
           {loading ? (
-            <ActivityIndicator size="large" color="#000" />
+            <LoadingIndicator />
           ) : (
-            userPosts.map((user) => <PostCard key={user.id} user={user} />)
+            userPosts.map((user) => (
+              <PostCard key={user.id} user={user} nameTime={nameTime} />
+            ))
           )}
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
-  StyleDeailsText: {
-    fontSize: 18,
-    fontWeight: "600",
+  container: {
+    flex: 1,
+    backgroundColor: "white",
+  },
+  posts: {
     padding: 10,
   },
-  detaisTextStyle: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  changeTextStyle: {
-    fontSize: 15,
-    fontWeight: "600",
-  },
-  eidtButton: {
-    backgroundColor: "#CCE8FF",
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 10,
-    width: "95%",
-    alignItems: "center",
+  loading: {
+    flex: 1,
     justifyContent: "center",
-    alignSelf: "center",
+    alignItems: "center",
   },
-  postComponentStyle: {
-    padding: 10,
+  postContainer: {
+    marginBottom: 15,
+  },
+  postHeader: {
+    flexDirection: "row",
+    paddingTop: 15,
+    alignItems: "center",
+  },
+  profileImage: {
+    width: 45,
+    height: 45,
+    borderRadius: 50,
+  },
+  userInfo: {
+    marginLeft: 10,
+  },
+  userName: {
+    fontSize: 17,
+    fontWeight: "600",
+  },
+  postDateTime: {
+    fontSize: 11,
+    marginTop: 5,
+  },
+  postText: {
+    marginTop: 10,
+  },
+  separator: {
+    borderWidth: 0.5,
+    borderColor: "#c1c1c1",
+    width: "100%",
+    alignSelf: "center",
+    marginTop: 5,
   },
 });

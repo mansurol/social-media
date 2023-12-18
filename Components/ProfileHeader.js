@@ -8,6 +8,7 @@ export default function ProfileHeader({ navigation }) {
   const dispatch = useDispatch();
 
   const userData = useSelector((state) => state.userdata);
+  // console.log("userData", userData);
   const handleLogout = () => {
     dispatch(setUser(""));
     navigation.navigate(Routes.Login);
@@ -17,7 +18,7 @@ export default function ProfileHeader({ navigation }) {
       <View>
         <Image
           source={{ uri: userData.photo }}
-          style={{ width: "100%", height: 170, resizeMode: "stretch" }}
+          style={{ width: "100%", height: 190, resizeMode: "cover" }}
         />
         <View style={styles.headerName}>
           <View

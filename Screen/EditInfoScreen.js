@@ -173,30 +173,6 @@ export default function EditInfoScreen({ navigation }) {
           )}
         </View>
 
-        <View style={styles.detailsTextStyle}>
-          <Text>
-            Followed by <Text style={styles.changeTextStyle}>{follower}</Text>
-          </Text>
-          {!isEditing ? (
-            <TouchableOpacity onPress={() => handleEdit("follower", follower)}>
-              <Icon
-                name="pencil"
-                type="font-awesome"
-                color="#3395D6"
-                size={17}
-              />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity onPress={handleSave}>
-              <Icon
-                name="check"
-                type="font-awesome"
-                color="#3395D6"
-                size={17}
-              />
-            </TouchableOpacity>
-          )}
-        </View>
         {isEditing ? (
           <>
             {/* Render the TextInput and Save button only during editing */}

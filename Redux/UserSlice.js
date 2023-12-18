@@ -1,4 +1,3 @@
-// userSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -12,7 +11,7 @@ const initialState = {
   follower: "12002 people",
 };
 
-export const userSlice = createSlice({
+const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
